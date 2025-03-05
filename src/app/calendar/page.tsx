@@ -1,26 +1,35 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {useAuth} from "@/context/AuthContext";
-import {useCallback} from "react";
-import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { getCalendars, getEvents } from "@/app/calendar/action";
 
 export default function CalendarPage() {
-  const {zoomToken, zoomUser} = useAuth();
+  const { zoomToken, zoomUser } = useAuth();
 
-  const {data: calendarData, isLoading: isLoadingEventData} = useQuery({
+  const { data: eventsData, isLoading: isLoadingEventData } = useQuery({
+    queryKey: ["events", zoomToken?.access_token, zoomUser?.email],
+    queryFn: () =>
+      getEvents({
+        access_token: zoomToken?.access_token || "",
+        id: zoomUser?.email || "",
+      }),
+  });
+
+  const { data: calendarData, isLoading: isLoadingCalendarData } = useQuery({
     queryKey: ["calendar"],
-    queryFn: () => axios
-      .post(process.env.NEXT_PUBLIC_API_URL!+ "/calendar", {
+    queryFn: () =>
+      getCalendars({
         access_token: zoomToken?.access_token,
       }),
   });
+
+  useEffect(() => {
+    console.log("calendarData", calendarData);
+  }, [calendarData]);
 
   return (
     <div className="flex flex-col w-full gap-6 p-6 md:p-10">
@@ -39,7 +48,7 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
-      {calendarData?.data.calendars.calendars === null && (
+      {eventsData?.data.calendars.calendars === null && (
         <div className="flex w-full items-center justify-center">
           <div className="p-4 border border-gray-400 rounded-lg w-full">
             <span>No events found</span>

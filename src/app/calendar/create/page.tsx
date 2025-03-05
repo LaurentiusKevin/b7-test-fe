@@ -1,6 +1,5 @@
 'use client'
 
-import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import {useAuth} from "@/context/AuthContext";
 import {useState} from "react";
@@ -12,7 +11,6 @@ import {Button} from "@/components/ui/button";
 export default function CreateEventPage() {
   const router = useRouter();
   const {zoomToken, zoomUser} = useAuth();
-  console.log(zoomUser)
 
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");

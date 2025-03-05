@@ -43,6 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedToken) {
       setZoomToken(JSON.parse(storedToken));
     }
+
+    const storedUser = localStorage.getItem('zoomUser');
+    if (storedUser) {
+      setZoomUser(JSON.parse(storedUser));
+    }
   }, []);
 
   const setZoomTokenAndStore = (token: ZoomToken | null) => {
